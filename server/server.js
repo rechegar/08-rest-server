@@ -1,34 +1,23 @@
 require('./config/config')
 
+const mongoose = require('mongoose');
+
 const express = require('express')
 const bodyParser = require('body-parser')
 
 const app = express()
+app.use(bodyParser.json())
+
+app.use(require('./controllers/site'))
+app.use(require('./controllers/api/user'))
 
 
-// create application/json parser
-const jsonParser = bodyParser.json()
-
-// create application/x-www-form-urlencoded parser
-const urlencodedParser = bodyParser.urlencoded({ extended: false })
-
-app.get('/', (req, res) => {
-    // res.send('Hello REST')
-    res.json('Hello REST')
-})
-
-
-// POST /login gets urlencoded bodies
-app.post('/login', urlencodedParser, function(req, res) {
-    if (!req.body) return res.sendStatus(400)
-    res.send('welcome, ' + req.body.username)
-})
-
-// POST /api/users gets JSON bodies
-app.post('/api/users', jsonParser, function(req, res) {
-    if (!req.body) return res.sendStatus(400)
-        // create user in req.body
-})
+mongoose.connect(
+    'mongodb://localhost:27017/cafe', { useNewUrlParser: true },
+    (err) => {
+        if (err) throw new Error('Error connecting to mongodb');
+    },
+);
 
 
 app.listen(process.env.PORT, () => console.log(`Server running on port ${ process.env.PORT }`))
